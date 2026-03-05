@@ -1,0 +1,154 @@
+<div class="container">
+  <div class="row mb-3">
+    <div class="col-md-12 mt-3">
+        <h2>Add a new Member to my Project team</h2>
+    </div>
+  </div>
+   
+        <form [formGroup]="addMemberForm" autocomplete="off">
+            <!-- Member name -->
+            <div class="mb-3 row">
+                <label for="memberName" class="col-sm-3 form-label ">Member Name: *</label>  
+                <div class="col-sm-9">
+                    <input type="text" name="memberName" id="memberName" placeholder="Member Name" class="form-control" formControlName="memberName" [class.is-invalid]="addMemberForm.get('memberName')?.invalid && addMemberForm.get('memberName')?.touched">
+                </div>  
+                <div class="col-sm-9 offset-sm-3" *ngIf="addMemberForm.get('memberName')?.errors?.['required'] && addMemberForm.get('memberName')?.touched" >
+                    <small class="text-danger">Member Name is required.</small>
+                </div>
+                <div class="col-sm-9 offset-sm-3" *ngIf="addMemberForm.get('memberName')?.errors?.['xssDetected'] && addMemberForm.get('memberName')?.touched" >
+                    <small class="text-danger">❌ XSS pattern detected! Please remove unsafe content.</small>
+                </div>
+            </div> 
+
+            <!-- Member ID -->
+            <div class="mb-3 row">  
+                <label for="memberID" class="col-sm-3 form-label ">Member ID: *</label>  
+                <div class="col-sm-9">
+                    <input type="text" name="memberID" id="memberID" placeholder="Member ID" class="form-control" formControlName="memberID" [class.is-invalid]="addMemberForm.get('memberID')?.invalid && addMemberForm.get('memberID')?.touched">
+                </div>                
+                <div class="col-sm-9 offset-sm-3" *ngIf="addMemberForm.get('memberID')?.errors?.['required'] && addMemberForm.get('memberID')?.touched" >
+                    <small class="text-danger">Member ID is required.</small>
+                </div>
+            </div>
+
+            <!-- Allocation Percent -->
+            <div class="mb-3 row">  
+                <label for="allocationPercentage" class="col-sm-3 form-label ">Allocation Percent: *</label>  
+                <div class="col-sm-9">
+                    <input type="number" name="allocationPercentage" id="allocationPercentage" placeholder="Enter Allocation Percent (0-100)" class="form-control" formControlName="allocationPercentage" [class.is-invalid]="addMemberForm.get('allocationPercentage')?.invalid && addMemberForm.get('allocationPercentage')?.touched">
+                </div>                
+                <div class="col-sm-9 offset-sm-3" *ngIf="addMemberForm.get('allocationPercentage')?.errors?.['required'] && addMemberForm.get('allocationPercentage')?.touched" >
+                    <small class="text-danger">Allocation Percent is required.</small>
+                </div>
+                <div class="col-sm-9 offset-sm-3" *ngIf="addMemberForm.get('allocationPercentage')?.errors?.['min'] && addMemberForm.get('allocationPercentage')?.touched" >
+                    <small class="text-danger">Allocation Percent must be at least 0.</small>
+                </div>
+                <div class="col-sm-9 offset-sm-3" *ngIf="addMemberForm.get('allocationPercentage')?.errors?.['max'] && addMemberForm.get('allocationPercentage')?.touched" >
+                    <small class="text-danger">Allocation Percent must be at most 100.</small>
+                </div>
+            </div>
+
+            <!-- Number of years of experience -->
+            <div class="mb-3 row">  
+                <label for="yearsOfExperience" class="col-sm-3 form-label ">Years of Experience: *</label>  
+                <div class="col-sm-9">
+                    <input type="number" name="yearsOfExperience" id="yearsOfExperience" placeholder="Years of Experience" class="form-control" formControlName="yearsOfExperience" [class.is-invalid]="addMemberForm.get('yearsOfExperience')?.invalid && addMemberForm.get('yearsOfExperience')?.touched">
+                </div>                
+                <div class="col-sm-9 offset-sm-3" *ngIf="addMemberForm.get('yearsOfExperience')?.errors?.['required'] && addMemberForm.get('yearsOfExperience')?.touched" >
+                    <small class="text-danger">Years of Experience is required.</small>
+                </div>
+                <div class="col-sm-9 offset-sm-3" *ngIf="addMemberForm.get('yearsOfExperience')?.errors?.['min'] && addMemberForm.get('yearsOfExperience')?.touched" >
+                    <small class="text-danger">Years of Experience must be at least 4.</small>
+                </div>
+            </div>
+
+            <!-- Skillset multi select with ng-bootstrap -->
+            <div class="mb-3 row">  
+                <label for="skillset" class="col-sm-3 form-label ">Skillset (select atleast 3): *</label>  
+                <div class="col-sm-9">
+                    <div ngbDropdown class="d-inline-block w-100">
+                        <button class="btn btn-outline-secondary dropdown-toggle w-100" id="skillsetDropdown" ngbDropdownToggle [class.is-invalid]="addMemberForm.get('skillset')?.invalid && addMemberForm.get('skillset')?.touched">
+                            Select Skills
+                        </button>
+                        <div ngbDropdownMenu aria-labelledby="skillsetDropdown" class="w-100" style="max-height: 200px; overflow-y: auto;">
+                            <button *ngFor="let skill of availableSkills" ngbDropdownItem (click)="toggleSkill(skill)" [class.active]="isSkillSelected(skill)" type="button">                                                              
+                                <input type="checkbox" [checked]="isSkillSelected(skill)" class="form-check-input me-2" /> {{ skill }}
+                            </button>
+                        </div>
+                    </div>                    
+                </div>
+                <div class="col-sm-9 offset-sm-3" *ngIf="addMemberForm.get('skillset')?.errors?.['minSelection'] && addMemberForm.get('skillset')?.invalid" >
+                    <small class="text-danger">Please select at least 3 skills. Currently selected: {{ addMemberForm.get('skillset')?.errors?.['minSelection']?.value  }}</small> 
+                </div>                 
+            </div>
+
+            <!-- Description -->
+            <div class="mb-3 row">  
+                <label for="description" class="col-sm-3 form-label ">Description: *</label>  
+                <div class="col-sm-9">
+                    <textarea name="description" id="description" placeholder="Description" class="form-control" formControlName="description" [class.is-invalid]="addMemberForm.get('description')?.invalid && addMemberForm.get('description')?.touched"></textarea>
+                </div>                
+                <div class="col-sm-9 offset-sm-3" *ngIf="addMemberForm.get('description')?.errors?.['required'] && addMemberForm.get('description')?.touched" >
+                    <small class="text-danger">Description is required.</small>
+                </div>
+            </div>
+
+
+            <!-- project start date with ng-bootstrap -->
+            <div class="mb-3 row">  
+                <label for="projectStartDate" class="col-sm-3 form-label ">Project Start Date: *</label>  
+                <div class="col-sm-9">
+                    <input class="form-control" placeholder="yyyy-mm-dd" name="projectStartDate" ngbDatepicker #d1="ngbDatepicker" formControlName="projectStartDate" [class.is-invalid]="addMemberForm.get('projectStartDate')?.invalid && addMemberForm.get('projectStartDate')?.touched">
+                    <button class="btn btn-outline-secondary mt-2" (click)="d1.toggle()" type="button">Select Start Date</button>
+                </div>                
+                <div class="col-sm-9 offset-sm-3" *ngIf="addMemberForm.get('projectStartDate')?.errors?.['required']" >
+                    <small class="text-danger">Project Start Date is required.</small>
+                </div>
+            </div>
+
+             <!-- project end date with ng-bootstrap -->
+            <div class="mb-3 row">  
+                <label for="projectEndDate" class="col-sm-3 form-label ">Project End Date: *</label>  
+                <div class="col-sm-9">
+                    <input class="form-control" placeholder="yyyy-mm-dd" name="projectEndDate" ngbDatepicker #d2="ngbDatepicker" formControlName="projectEndDate" [class.is-invalid]="addMemberForm.get('projectEndDate')?.invalid && addMemberForm.get('projectEndDate')?.touched">
+                    <button class="btn btn-outline-secondary mt-2" (click)="d2.toggle()" type="button">Select End Date</button>
+                </div>                
+                <div class="col-sm-9 offset-sm-3" *ngIf="addMemberForm.get('projectEndDate')?.errors?.['required']">
+                    <small class="text-danger">Project End Date is required.</small>
+                </div>
+                
+                
+                <!-- Custom validator error message for date range -->
+                <div class="col-sm-9 offset-sm-3" *ngIf="addMemberForm?.errors?.dateRangeInvalid && (addMemberForm.get('projectEndDate')?.touched || addMemberForm.get('projectStartDate')?.touched)" >
+                    <small class="text-danger">Project End Date must be after the Start Date.</small>
+                </div>
+            </div>
+
+            <!-- Submit button -->
+            <div class="mb-3 row">  
+                <button class="btn btn-primary col-sm-3 offset-sm-3" type="submit" [disabled]="!addMemberForm.valid" (click)="addMember()">Add Member</button>
+            </div>
+
+            <!-- success message -->             
+            <div class="mb-3 row" *ngIf="memberAddedSuccessfully">
+                <div class="col-sm-9 offset-sm-3">
+                    <div class="alert alert-success" role="alert">
+                        Member added successfully to the project team!
+                    </div>
+                </div>
+            </div>
+
+             <!-- error message -->             
+             <div class="mb-3 row" *ngIf="memberAdditionFailed">
+                <div class="col-sm-9 offset-sm-3">
+                    <div class="alert alert-danger" role="alert">
+                        Failed to add member. Please try again.
+                    </div>
+                </div>
+            </div>
+            
+            
+        </form>
+   
+</div>
+ 

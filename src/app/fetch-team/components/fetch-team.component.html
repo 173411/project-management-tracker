@@ -1,0 +1,61 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 mt-3">
+        <h2>My Team Details</h2>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12 mt-3">    
+      <table class="table table-bordered table-striped table-hover">
+        <thead class="table-header">
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th class="sortable-header" (click)="sortByExperience()" [class.active]="sortBy === 'experience'">
+              Experience (Yrs)
+              <span class="sort-icon" *ngIf="sortBy === 'experience'">
+                {{ sortDirection === 'asc' ? '▲' : '▼' }}
+              </span>
+            </th>
+            <th>Skillset</th>
+            <th>Description</th>
+            <th>Project Start</th>
+            <th>Project End</th>
+            <th>Allocation %</th>
+            <th>Task Name</th>
+            <th>Deliverables</th>
+            <th>Task Start</th>
+            <th>Task End</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let member of teamMembers" class="member-row">
+            <td>{{ member.memberID }}</td>
+            <td class="font-weight-bold">{{ member.memberName }}</td>
+            <td class="text-center">{{ member.yearsOfExperience }}</td>
+            <td>
+              <div class="skillset-container">
+                <span *ngFor="let skill of member.skillset; let last = last" class="skill-badge">
+                  {{ skill }}<span *ngIf="!last" class="skill-separator">,</span>
+                </span>
+              </div>
+            </td>
+            <td>{{ member.description }}</td>
+            <td class="text-center">{{ member.projectStartDate.day }}-{{ member.projectStartDate.month }}-{{ member.projectStartDate.year }}</td>
+            <td class="text-center">{{ member.projectEndDate.day }}-{{ member.projectEndDate.month }}-{{ member.projectEndDate.year }}</td>
+            <td class="text-center">
+              <div class="allocation-bar-container">
+                <div class="allocation-bar" [style.width.%]="member.allocationPercentage"></div>
+                <span class="allocation-text">{{ member.allocationPercentage }}%</span>
+              </div>
+            </td>
+            <td class="task-name">{{ member.task?.taskName || 'N/A' }}</td>
+            <td>{{ member.task?.deliverables || 'N/A' }}</td>
+            <td class="text-center">{{ member.task?.taskStartDate ? member.task?.taskStartDate.day + '-' + member.task?.taskStartDate.month + '-' + member.task?.taskStartDate.year : 'N/A' }}</td>
+            <td class="text-center">{{ member.task?.taskEndDate ? member.task?.taskEndDate.day + '-' + member.task?.taskEndDate.month + '-' + member.task?.taskEndDate.year : 'N/A' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,8 @@
+/* You can add global styles to this file, and also import other style files */
+
+/* import Bootstrap so it passes through PostCSS (PurgeCSS) */
+@import "bootstrap/dist/css/bootstrap.min.css";
+
+.btn {
+    margin: 0 10px;
+}

@@ -1,0 +1,34 @@
+<div class="container">
+  <div class="row mb-3">
+    <div class="col-md-12 mt-3">
+        <h2>Update Allocation</h2>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-4 text-end">    
+      <label for="memberID" class="form-label">Member ID: *</label>     
+    </div>
+    <div class="col-md-8">    
+      <input type="text" name="memberID" id="memberID" [(ngModel)]="memberID" placeholder="Member ID" required autocomplete="off">
+      <button class="btn btn-primary" (click)="searchMember()">Search Member</button>
+    </div>
+  </div>
+  <div *ngIf="searchMemberClicked">
+    <div class="row" *ngIf="!memberFound">
+        <div class="col-md-12 mt-3">
+            <h5>Team member not found, please try another ID. You may look up the member ID in the Fetch Team section.</h5>
+        </div>
+    </div>
+    <div class="row" *ngIf="memberFound">
+        <div class="col-md-12 mt-3">
+            <h5>Member found! You can now update the allocation details by clicking the Update Allocation button.
+            </h5>
+            <p>Member Name: {{ memberDetails?.memberName }} | Current Allocation: {{ memberDetails?.allocationPercentage }}% | Project Start Date: {{ memberDetails?.projectStartDate.day }}-{{ memberDetails?.projectStartDate.month }}-{{ memberDetails?.projectStartDate.year }} | Project End Date: {{ memberDetails?.projectEndDate.day }}-{{ memberDetails?.projectEndDate.month }}-{{ memberDetails?.projectEndDate.year }}
+            </p>
+        </div>
+        <div class="col-md-12 mt-3">
+            <button class="btn btn-success" (click)="updateAllocation()">Update Allocation</button>
+        </div>
+    </div>
+  </div>
+</div>

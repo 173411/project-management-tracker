@@ -1,0 +1,110 @@
+<div class="container">
+  <div class="row mb-3">
+    <div class="col-md-12 mt-3">
+        <h2>Add a new Member to my Project team</h2>
+    </div>
+  </div>
+
+  <form [formGroup]="assignTaskForm" autocomplete="off">
+
+    <!-- Member ID -->
+    <div class="mb-3 row">  
+        <label for="memberID" class="col-sm-3 form-label ">Member ID: *</label>  
+        <div class="col-sm-9">
+            <select name="memberID" id="memberID" class="form-select" formControlName="memberID" [class.is-invalid]="assignTaskForm.get('memberID')?.invalid && assignTaskForm.get('memberID')?.touched">
+                <option value="" disabled selected>Select a team member</option>
+                <option *ngFor="let member of teamMembers" [value]="member.memberID">{{ member.memberName }} (ID: {{ member.memberID }})</option>
+            </select>
+        </div>
+        <div *ngIf="assignTaskForm.get('memberID')?.errors?.['required'] && assignTaskForm.get('memberID')?.touched" class="col-sm-9 offset-sm-3">
+            <small class="text-danger">Please select a team member.</small>
+        </div>
+    </div>
+
+    <!-- Update task related items -->
+     <div *ngIf="assignTaskForm.get('memberID')?.valid">
+        <div class="mb-3 row">
+            <label for="taskName" class="col-sm-3 form-label">Task Name: *</label>  
+            <div class="col-sm-9">
+                <input type="text" name="taskName" id="taskName" class="form-control" formControlName="taskName" placeholder="Enter task name" [class.is-invalid]="assignTaskForm.get('taskName')?.invalid && assignTaskForm.get('taskName')?.touched">
+            </div>
+            <div *ngIf="assignTaskForm.get('taskName')?.errors?.['required'] && assignTaskForm.get('taskName')?.touched" class="col-sm-9 offset-sm-3">
+                <small class="text-danger">Please enter a task name.</small>
+            </div>
+        </div>
+
+        <div class="mb-3 row">
+            <label for="deliverables" class="col-sm-3 form-label">Deliverables: *</label>  
+            <div class="col-sm-9">
+                <textarea name="deliverables" id="deliverables" class="form-control" formControlName="deliverables" placeholder="Enter deliverables" [class.is-invalid]="assignTaskForm.get('deliverables')?.invalid && assignTaskForm.get('deliverables')?.touched"></textarea>
+            </div>
+            <div *ngIf="assignTaskForm.get('deliverables')?.errors?.['required'] && assignTaskForm.get('deliverables')?.touched" class="col-sm-9 offset-sm-3">
+                <small class="text-danger">Please enter deliverables.</small>
+            </div>
+        </div>
+
+        <!-- task start date with ng-bootstrap -->
+         <div class="mb-3 row">  
+            <label for="taskStartDate" class="col-sm-3 form-label ">Task Start Date: *</label>  
+            <div class="col-sm-9">
+                <input class="form-control" placeholder="yyyy-mm-dd" name="taskStartDate" ngbDatepicker #d1="ngbDatepicker" formControlName="taskStartDate" [class.is-invalid]="assignTaskForm.get('taskStartDate')?.invalid && assignTaskForm.get('taskStartDate')?.touched">
+                <button class="btn btn-outline-secondary mt-2" (click)="d1.toggle()" type="button">Select Start Date</button>
+            </div>                
+            <div class="col-sm-9 offset-sm-3" *ngIf="assignTaskForm.get('taskStartDate')?.errors?.['required']" >
+                <small class="text-danger">Task Start Date is required.</small>
+            </div>
+        </div>
+         
+
+        <!-- task end date with ng-bootstrap -->
+        <div class="mb-3 row">
+            <label for="taskEndDate" class="col-sm-3 form-label">Task End Date: *</label>  
+            <div class="col-sm-9">
+                <input class="form-control" placeholder="yyyy-mm-dd" name="taskEndDate" ngbDatepicker #d2="ngbDatepicker" formControlName="taskEndDate" [class.is-invalid]="assignTaskForm.get('taskEndDate')?.invalid && assignTaskForm.get('taskEndDate')?.touched">
+                <button class="btn btn-outline-secondary mt-2" (click)="d2.toggle()" type="button">Select End Date</button>
+            </div>
+            <div *ngIf="assignTaskForm.get('taskEndDate')?.errors?.['required'] && assignTaskForm.get('taskEndDate')?.touched" class="col-sm-9 offset-sm-3">
+                <small class="text-danger">Please select a task end date.</small>
+            </div>
+            <div *ngIf="assignTaskForm.errors?.['dateRangeInvalid'] && (assignTaskForm.get('taskStartDate')?.touched || assignTaskForm.get('taskEndDate')?.touched)" class="col-sm-9 offset-sm-3">
+                <small class="text-danger">Task end date must be after start date.</small>
+            </div>            
+        </div>
+
+     </div>
+    
+
+    <!-- Submit button -->
+    <div class="mb-3 row">  
+        <button class="btn btn-primary col-sm-3 offset-sm-3" type="submit" [disabled]="!assignTaskForm.valid" (click)="assignTask()">Assign Task</button>
+    </div>
+
+    <!-- error message if project end date is less than task end date-->             
+    <div class="mb-3 row" *ngIf="invalidTaskEndDate">
+        <div class="col-sm-9 offset-sm-3">
+            <div class="alert alert-danger" role="alert">
+                Your task end date cannot be after the project end date - {{ projectEndDate | date }}. Please select a valid task end date.
+            </div>
+        </div>
+    </div>
+
+    <!-- success message -->             
+    <div class="mb-3 row" *ngIf="taskAssignedSuccessfully">
+        <div class="col-sm-9 offset-sm-3">
+            <div class="alert alert-success" role="alert">
+                Task assigned successfully! You can view the assigned task details in the Fetch Team section.
+            </div>
+        </div>
+    </div>
+
+    <!-- error message -->             
+    <div class="mb-3 row" *ngIf="taskAssignmentFailed">
+        <div class="col-sm-9 offset-sm-3">
+            <div class="alert alert-danger" role="alert">
+                Failed to assign task. Please try again.
+            </div>
+        </div>
+    </div>
+
+  </form>
+</div>

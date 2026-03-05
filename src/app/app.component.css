@@ -1,0 +1,28 @@
+/* Navigation Bar Styles */
+nav {
+  display: flex;
+  gap: 1rem;
+  padding: .5rem;
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #ddd;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+nav a {
+  color: #333;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+}
+
+nav a:hover {
+  color: #92a9f7;
+}
+
+nav a.active {
+  color: #0066cc;
+  font-weight: bold;
+}
+
