@@ -66,6 +66,16 @@ export class AddMemberComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.addMemberForm = this.formBuilder.group({
       // Define form controls and validators here
+      memberName: ['', [Validators.required, this.customValidationService.XSSValidator()]],
+      memberID: ['', [Validators.required, this.customValidationService.XSSValidator()]],
+      yearsOfExperience: ['', [Validators.required, Validators.min(4)]],      
+      skillset: [[], [Validators.required, this.customValidationService.minSelection(3)]], // Assuming skillset is an array of selected skills    
+      description: ['', [Validators.required, this.customValidationService.XSSValidator()]],
+      projectStartDate: [{}, [Validators.required]],     
+      projectEndDate: [{}, [Validators.required]],
+      allocationPercentage: ['', [Validators.required, Validators.min(0), Validators.max(100)]],
+
+      /*
       memberName: ['ss', [Validators.required, this.customValidationService.XSSValidator()]],
       memberID: ['1', [Validators.required, this.customValidationService.XSSValidator()]],
       yearsOfExperience: ['6', [Validators.required, Validators.min(4)]],      
@@ -74,6 +84,7 @@ export class AddMemberComponent implements OnInit, OnDestroy {
       projectStartDate: [{year: 2023, month: 3, day: 24}, [Validators.required]],     
       projectEndDate: [{year: 2026, month: 3, day: 31}, [Validators.required]],
       allocationPercentage: ['40', [Validators.required, Validators.min(0), Validators.max(100)]],
+      */
     }, {
       // Custom validator to ensure project end date is after start date
       validators: this.customValidationService.projectDateValidator('projectStartDate', 'projectEndDate')
