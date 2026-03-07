@@ -4,6 +4,7 @@ import { CustomValidationService } from '../../services/custom-validation.servic
 import { Subject, Subscription } from 'rxjs';
 import { SKILLSET } from '../../constants/app.constants';
 import { SharedService } from '../../services/shared.service';
+import { ITeamMember } from '../../models/project-management-tracker.model';
 
 @Component({
   selector: 'app-add-member',
@@ -42,7 +43,7 @@ export class AddMemberComponent implements OnInit, OnDestroy {
   }
 
   addMember(): void {
-    // Implementation for adding a member will go here
+    // Implementation for adding a member with static data will go here
     if (this.addMemberForm.valid) {
       const memberData = this.addMemberForm.value;
       console.log('Adding member with data:', memberData);
@@ -62,6 +63,28 @@ export class AddMemberComponent implements OnInit, OnDestroy {
       console.log('Form is invalid. Please correct the errors and try again.');
     }
   }
+
+  addTeamMemberViaAPI(): void {
+    if (this.addMemberForm.valid) {
+    const memberData = this.addMemberForm.value;
+      console.log('Adding member with data:', memberData);
+    this.subscription = this._memberService.addTeamMemberViaAPI(memberData).subscribe({
+      next: response => {
+        console.log('Member added successfully via API:', response);
+        this.memberAddedSuccessfully = true;
+        this.memberAdditionFailed = false;
+        this.addMemberForm.reset(); // Reset the form after successful submission
+      },
+      error: err => {
+        console.error('Error adding member via API:', err);
+        this.memberAddedSuccessfully = false;
+        this.memberAdditionFailed = true;
+      }
+    });
+    } else {
+      console.log('Form is invalid. Please correct the errors and try again.');
+    }
+  }      
 
   ngOnInit(): void {
     this.addMemberForm = this.formBuilder.group({

@@ -20,16 +20,6 @@ export class CustomValidationService {
         };
     }
 
-    minSelection2(min: number): ValidatorFn | null {
-        return (control: AbstractControl) => {
-            const selectedOptions = control.value;
-            if (Array.isArray(selectedOptions) && selectedOptions.length >= min) {
-                return null; // Valid
-            }
-            return { 'minSelection': { value: control.value, requiredMin: min } }; // Invalid
-        };
-    }
-
     projectDateValidator(startDateControl: string, endDateControl: string): ValidatorFn | null {
         return (group: AbstractControl) => {
             

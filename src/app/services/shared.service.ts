@@ -1,10 +1,13 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ITask, ITeamMember } from '../models/project-management-tracker.model';
+import { API_ENDPOINTS } from '../constants/app.constants';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root' // Available across all modules
 })
+
 export class SharedService {
   private teamMembers = new BehaviorSubject<ITeamMember[]>([]);
   private tasks = new BehaviorSubject<any[]>([]);
@@ -14,7 +17,15 @@ export class SharedService {
   public tasks$ = this.tasks.asObservable();
   public selectedMember$ = this.selectedMember.asObservable();
 
-  constructor() { }
+  constructor(private http: HttpClient) { }
+
+  getAllMembersFromAPI(): Observable<any> {
+    return this.http.get<ITeamMember[]>(API_ENDPOINTS.BASEURL + API_ENDPOINTS.GET_ALL_MEMBERS);
+  }
+
+  getMemberByIDFromAPI(id: string): Observable<ITeamMember> {
+    return this.http.get<ITeamMember>(`${API_ENDPOINTS.BASEURL + API_ENDPOINTS.GET_ONE_MEMBER.replace(':id', id)}`);
+  }
 
   // Team Members methods
   setTeamMembers(members: ITeamMember[]): void {
@@ -36,6 +47,10 @@ export class SharedService {
       observer.next(true);
       observer.complete();
     });
+  }
+
+  addTeamMemberViaAPI(member: ITeamMember): Observable<ITeamMember> {
+    return this.http.post<ITeamMember>(API_ENDPOINTS.BASEURL + API_ENDPOINTS.ADD_MEMBER, member);
   }
 
   updateTeamMember(id: string, member: ITeamMember): void {
@@ -75,6 +90,10 @@ export class SharedService {
     }
   }
 
+  assignTaskViaAPI(memberID: string, task: ITask): Observable<ITeamMember> {
+    return this.http.post<ITeamMember>(`${API_ENDPOINTS.BASEURL + API_ENDPOINTS.ASSIGN_TASK.replace(':id', memberID)}`, task);
+  }
+  
   // Selected Member methods
   setSelectedMember(member: ITeamMember | null): void {
     this.selectedMember.next(member);

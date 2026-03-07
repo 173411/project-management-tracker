@@ -12,12 +12,18 @@ export class FetchTeamComponent implements OnInit, OnDestroy {
   private subscription: any;
   sortBy: string | null = null;
   sortDirection: 'asc' | 'desc' = 'asc';
+  dataLoaded: boolean = false;
 
   constructor(private _memberService: SharedService) { }
 
   ngOnInit(): void {
-    this.subscription = this._memberService.teamMembers$.subscribe(members => {
-      this.teamMembers = members;
+    this.subscription = this._memberService.getAllMembersFromAPI()?.subscribe(response => {
+      if (response && response.teamMembers) {
+        this.dataLoaded = true;
+        this.teamMembers = response.teamMembers; // Assuming the API response has a 'teamMembers' property that contains the array of members
+      } else {
+        console.error('Failed to fetch team members from API');
+      }
     });
   }
 
