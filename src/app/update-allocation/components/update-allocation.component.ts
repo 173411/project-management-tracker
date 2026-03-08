@@ -36,6 +36,21 @@ export class UpdateAllocationComponent implements OnInit, OnDestroy {
       });
   }
 
+  searchMemberViaAPI(): void {
+    console.log('Search Member via API with ID:', this.memberID);
+    this.searchMemberClicked = true;  
+
+    this._memberService.getMemberByIDFromAPI(this.memberID)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({ 
+        next: data => {
+          const member = data?.member; // Assuming the API response has a 'member' property containing the member data
+          this.handleMemberFound(member);
+        },
+        error: err => this.handleFetchError(err)
+      });
+  }
+
   updateAllocation(): void {
     const id = this.memberDetails?.memberID;
     if (!id) {
@@ -64,6 +79,28 @@ export class UpdateAllocationComponent implements OnInit, OnDestroy {
 
   private handleAllocationUpdated(): void {
     console.log('Allocation updated for member:', this.memberDetails);
+  }
+
+  // Update allocation percentage via API based on project end date
+  updateAllocationViaAPI(): void {
+    const id = this.memberDetails?.memberID;
+    if (!id) {
+      return;
+    }
+    let allocationPercentage = this.memberDetails?.allocationPercentage;
+
+    if(new Date(this.memberDetails?.projectEndDate.year, this.memberDetails?.projectEndDate.month - 1, this.memberDetails?.projectEndDate.day) < new Date()) {
+          allocationPercentage = 0;
+    } else {
+          allocationPercentage = 100;
+    }
+
+    this._memberService.updateAllocationViaAPI(id, allocationPercentage)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => { this.memberDetails = response?.member; this.handleAllocationUpdated(); },
+        error: err => console.error('Error updating allocation:', err)
+      });
   }
 
   ngOnDestroy(): void {

@@ -10,7 +10,7 @@
     </div>
     <div class="col-md-8">    
       <input type="text" name="memberID" id="memberID" [(ngModel)]="memberID" placeholder="Member ID" required autocomplete="off">
-      <button class="btn btn-primary" (click)="searchMember()">Search Member</button>
+      <button class="btn btn-primary" (click)="searchMemberViaAPI()">Search Member</button>
     </div>
   </div>
   <div *ngIf="searchMemberClicked">
@@ -27,7 +27,7 @@
             </p>
         </div>
         <div class="col-md-12 mt-3">
-            <button class="btn btn-success" (click)="updateAllocation()">Update Allocation</button>
+            <button class="btn btn-success" (click)="updateAllocationViaAPI()">Update Allocation</button>
         </div>
     </div>
   </div>

@@ -45,4 +45,27 @@ export class ViewTaskComponent implements OnInit {
     });
   }
 
+  // View task via API call
+  viewTaskViaAPI(): void {
+    console.log('Viewing task via API for Member ID:', this.memberID);
+    this.viewTaskClicked = true;
+    this._memberService.getMemberByIDFromAPI(this.memberID).subscribe({
+      next: data => {
+        const memberDetails = data?.member; // Assuming the API response has a 'member' property containing the member data 
+        console.log('Member found via API:', memberDetails);
+        this.memberFound = true;
+        this.memberDetails = memberDetails;
+        if (memberDetails && memberDetails.task) {
+          this.taskFound = true;
+        } else {
+          this.taskFound = false;
+        } 
+      },
+      error: err => {
+        console.error('Error fetching memberDetails via API:', err);
+        this.memberFound = false;
+      }
+    });
+  }
+
 }

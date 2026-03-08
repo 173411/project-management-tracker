@@ -124,7 +124,88 @@ export class AssignTaskComponent implements OnInit, OnDestroy {
         next: members => {this.teamMembers = members; this.populateData();},
         error: err => console.error('Error fetching team members:', err)
       });
+
+    // via API call
+    this._sharedService.getAllMembersFromAPI()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: response => {
+          if(response && response.teamMembers) {              
+            this.teamMembers = response.teamMembers; 
+            this.populateData();
+          } else {
+            console.error('Failed to fetch team members from API');
+          }
+        },
+        error: err => console.error('Error fetching team members from API:', err)
+      });
   }
+
+  validateTaskEndDateViaAPI(memberID: string, taskEndDate: any): Promise<boolean> {    
+    return new Promise((resolve) => {
+      this._sharedService.getMemberByIDFromAPI(memberID).pipe(takeUntil(this.destroy$)).subscribe({
+        next: data => {
+          const member = data?.member; // Assuming the API response has a 'member' property containing the member data
+          if (member && member.projectEndDate) {
+            const projectEndDate = new Date(member.projectEndDate.year, member.projectEndDate.month - 1, member.projectEndDate.day);
+            const newTaskEndDate = new Date(taskEndDate.year, taskEndDate.month - 1, taskEndDate.day);
+            if (newTaskEndDate > projectEndDate) {
+              this.projectEndDate = projectEndDate; // Store project end date for potential use in the template
+              this.invalidTaskEndDate = true;
+              this.taskAssignmentFailed = true;
+              this.taskAssignedSuccessfully = false;
+              resolve(false);
+            } else {
+              resolve(true);
+            }
+          } else {
+            resolve(false);
+          }
+        },
+        error: err => {
+          console.error('Error fetching member for validation:', err);
+          resolve(false);
+        }
+      });
+    });
+  }
+
+
+  assignTaskViaAPI() {
+    if (this.assignTaskForm.valid) {
+      const taskData = this.assignTaskForm.value; 
+      console.log('Assigning task with data:', taskData);
+      /* get the member's project end date and validate the task end date before making the API call */
+      this.validateTaskEndDateViaAPI(taskData.memberID, taskData.taskEndDate).then(isValid => { 
+        if (!isValid) {
+          return;
+        } else {
+          this.invalidTaskEndDate = false; // Reset invalid end date flag if validation passes
+          this.assgnTaskToMemberViaAPI(taskData);
+        }
+    });
+      
+    } else {
+      console.log('Form is invalid. Please correct the errors and try again.');
+      this.taskAssignmentFailed = true;
+      this.taskAssignedSuccessfully = false;
+    }
+  }
+
+  assgnTaskToMemberViaAPI(taskData: any): void {
+    console.log('Assigning task with data:', taskData);
+    const task: ITask = {
+      taskName: taskData.taskName,
+      deliverables: taskData.deliverables,
+      taskStartDate: taskData.taskStartDate,
+      taskEndDate: taskData.taskEndDate
+    };
+
+    this._sharedService.assignTaskViaAPI(taskData.memberID, task).pipe(takeUntil(this.destroy$)).subscribe({
+      next: () => this.handleTaskAssigned(),
+      error: err => { console.error('Error assigning task:', err); this.taskAssignmentFailed = true; this.taskAssignedSuccessfully = false; }
+    });
+  } 
 
   ngOnDestroy(): void {
     // Cleanup logic can go here

@@ -23,8 +23,8 @@ export class SharedService {
     return this.http.get<ITeamMember[]>(API_ENDPOINTS.BASEURL + API_ENDPOINTS.GET_ALL_MEMBERS);
   }
 
-  getMemberByIDFromAPI(id: string): Observable<ITeamMember> {
-    return this.http.get<ITeamMember>(`${API_ENDPOINTS.BASEURL + API_ENDPOINTS.GET_ONE_MEMBER.replace(':id', id)}`);
+  getMemberByIDFromAPI(id: string): Observable<any> {
+    return this.http.get<any>(`${API_ENDPOINTS.BASEURL + API_ENDPOINTS.GET_ONE_MEMBER.replace(':id', id)}`);
   }
 
   // Team Members methods
@@ -93,7 +93,7 @@ export class SharedService {
   assignTaskViaAPI(memberID: string, task: ITask): Observable<ITeamMember> {
     return this.http.post<ITeamMember>(`${API_ENDPOINTS.BASEURL + API_ENDPOINTS.ASSIGN_TASK.replace(':id', memberID)}`, task);
   }
-  
+
   // Selected Member methods
   setSelectedMember(member: ITeamMember | null): void {
     this.selectedMember.next(member);
@@ -132,5 +132,9 @@ export class SharedService {
         observer.error(new Error('Member not found'));
       }
     });
+  }
+
+  updateAllocationViaAPI(id: string, allocationPercentage: number): Observable<any> {
+    return this.http.put<any>(`${API_ENDPOINTS.BASEURL + API_ENDPOINTS.UPDATE_ALLOCATION.replace(':id', id)}`, { allocationPercentage: allocationPercentage });    
   }
 }

@@ -10,7 +10,7 @@
     </div>
     <div class="col-md-8">    
       <input type="text" name="memberID" id="memberID" class="" [(ngModel)]="memberID" placeholder="Member ID" autocomplete="off" required>      
-      <button class="btn btn-primary" (click)="viewTask()">View Task</button>
+      <button class="btn btn-primary" (click)="viewTaskViaAPI()">View Task</button>
     </div>
   </div>
   <div *ngIf="viewTaskClicked">
